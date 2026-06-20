@@ -1,0 +1,128 @@
+.contactPage {
+  padding: 5rem 0;
+  background-color: var(--background);
+  min-height: 80vh;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.title {
+  font-size: 3rem;
+  color: var(--color-primary);
+  margin-bottom: 1rem;
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  color: var(--color-text-muted);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+}
+
+.infoCol h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.infoCol p {
+  font-size: 1.1rem;
+  margin-bottom: 2.5rem;
+  color: var(--foreground);
+}
+
+.contactDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.detailItem h3 {
+  font-size: 1.1rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+}
+
+.detailItem p {
+  margin-bottom: 0;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--color-primary);
+}
+
+.socialLinks {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.socialLinks a {
+  color: var(--color-accent);
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.socialLinks a:hover {
+  text-decoration: underline;
+  color: var(--color-primary);
+}
+
+.formCard {
+  background-color: var(--color-white);
+  padding: 3rem;
+  border-radius: 12px;
+  box-shadow: 0 5px 25px rgba(0,0,0,0.08);
+}
+
+.formCard h2 {
+  margin-bottom: 2rem;
+  font-size: 1.8rem;
+  color: var(--color-primary);
+  text-align: center;
+}
+
+.formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--color-primary);
+}
+
+.input, .textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #dcdacb;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 1rem;
+  background-color: #fbf9f6;
+  transition: border-color 0.3s;
+}
+
+.input:focus, .textarea:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  background-color: var(--color-white);
+}
+
+.submitBtn {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,65 +1,115 @@
-import Image from "next/image";
+import React from 'react';
+import Image from 'next/image';
+import Button from '@/components/Button';
+import styles from './Home.module.css';
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+    <div className={styles.homeWrapper}>
+      <section className={styles.hero}>
+        <div className={`container ${styles.heroContainer}`}>
+          <div className={styles.heroContent}>
+            <h1 className={styles.heroTitle}>Evidence-Based Wellness Solutions for Modern Organizations</h1>
+            <p className={styles.heroSubtitle}>
+              Helping health brands, corporates, and schools communicate wellness with credibility, clarity, and impact.
+            </p>
+            <div className={styles.heroActions}>
+              <Button href="/services" variant="primary">Our Services</Button>
+              <Button href="/contact" variant="outline">Contact Us</Button>
+            </div>
+          </div>
+          <div className={styles.heroImageWrapper}>
+            <div className={styles.heroImageShape}></div>
+            <Image 
+              src="/ella-olsson-KPDbRyFOTnE-unsplash.jpg" 
+              alt="Healthy vibrant wellness" 
+              width={600} 
+              height={600} 
+              className={styles.heroImage}
+              priority
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+          </div>
         </div>
-      </main>
+      </section>
+
+      <section className={styles.intro}>
+        <div className={`container ${styles.introContainer}`}>
+          <div className={styles.introText}>
+            <h2>Welcome to Oasis Wellness Consultancy</h2>
+            <p>
+              We transform complex health information into engaging, credible content that builds trust, authority, and audience engagement. With over 10 years of experience in nutrition and wellness, Oasis Wellness Consultancy combines scientific expertise with practical solutions that create meaningful impact.
+            </p>
+            <Button href="/about" variant="secondary">Meet the Founder</Button>
+          </div>
+        </div>
+      </section>
+
+      <section className={styles.services}>
+        <div className="container">
+          <div className={styles.sectionHeader}>
+            <h2>Our Core Services</h2>
+            <p>Tailored solutions for your organization&apos;s unique needs.</p>
+          </div>
+          <div className={styles.servicesGrid}>
+            <div className={styles.serviceCard}>
+              <div className={styles.serviceImageWrapper}>
+                <Image 
+                  src="/towfiqu-barbhuiya-G5w8OSzHDhI-unsplash.jpg"
+                  alt="Social Media Management"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className={styles.serviceImage}
+                />
+              </div>
+              <div className={styles.serviceCardContent}>
+                <h3>Health & Wellness Social Media Management</h3>
+                <p>Strategic content development and social media management for health and wellness brands. We create credible, engaging content that educates audiences and strengthens brand trust.</p>
+                <Button href="/services#social-media" variant="secondary">Learn More</Button>
+              </div>
+            </div>
+            
+            <div className={styles.serviceCard}>
+              <div className={styles.serviceImageWrapper}>
+                <Image 
+                  src="/joseph-gonzalez-fdlZBWIP0aM-unsplash.jpg"
+                  alt="Wellness Training"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className={styles.serviceImage}
+                />
+              </div>
+              <div className={styles.serviceCardContent}>
+                <h3>Corporate & School Wellness Training</h3>
+                <p>Interactive wellness education programs designed to improve health knowledge, productivity, and long-term wellbeing. Engaging sessions on healthy eating and lifestyle habits.</p>
+                <Button href="/services#training" variant="secondary">Learn More</Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <section className={styles.whyUs}>
+        <div className="container">
+          <h2 className={styles.whyUsTitle}>Why Work With Us?</h2>
+          <div className={styles.benefitsGrid}>
+            <div className={styles.benefit}>
+              <div className={styles.benefitIcon}>✓</div>
+              <h4>10+ Years Expertise</h4>
+              <p>Deep knowledge of nutrition and wellness science to back every claim.</p>
+            </div>
+            <div className={styles.benefit}>
+              <div className={styles.benefitIcon}>✓</div>
+              <h4>Evidence-Based</h4>
+              <p>Rooted in science, free from fads, and focused on practical solutions.</p>
+            </div>
+            <div className={styles.benefit}>
+              <div className={styles.benefitIcon}>✓</div>
+              <h4>Targeted Communication</h4>
+              <p>We know how to translate complex science into engaging, clear messaging.</p>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

@@ -1,0 +1,292 @@
+.homeWrapper {
+  background-color: var(--background);
+}
+
+.hero {
+  padding: 8rem 0 6rem;
+  background-color: var(--background);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Cream shape background behind the hero */
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50%;
+  height: 100%;
+  background-color: var(--color-secondary);
+  border-bottom-left-radius: 40%;
+  z-index: 0;
+}
+
+.heroContainer {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 4rem;
+}
+
+.heroContent {
+  flex: 1;
+  max-width: 600px;
+}
+
+.heroTitle {
+  color: var(--color-primary);
+  font-size: 4rem;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  letter-spacing: -1.5px;
+  font-weight: 800;
+}
+
+.heroSubtitle {
+  font-size: 1.25rem;
+  color: var(--color-text-muted);
+  margin-bottom: 2.5rem;
+  line-height: 1.6;
+}
+
+.heroActions {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.heroImageWrapper {
+  flex: 1;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.heroImageShape {
+  position: absolute;
+  width: 90%;
+  height: 90%;
+  background-color: var(--color-accent-light);
+  border-radius: 50%;
+  bottom: -10%;
+  right: -5%;
+  z-index: -1;
+}
+
+.heroImage {
+  width: 100%;
+  height: auto;
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+  object-fit: cover;
+  position: relative;
+  z-index: 2;
+}
+
+.intro {
+  padding: 6rem 0;
+  background-color: var(--color-accent-light);
+  border-radius: 40px;
+  margin: 0 2rem;
+}
+
+.introText {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.introText h2 {
+  font-size: 2.8rem;
+  letter-spacing: -1px;
+}
+
+.introText p {
+  font-size: 1.2rem;
+  color: var(--foreground);
+  margin-bottom: 2.5rem;
+  line-height: 1.8;
+}
+
+.services {
+  padding: 8rem 0;
+}
+
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.sectionHeader h2 {
+  font-size: 3rem;
+  letter-spacing: -1px;
+  margin-bottom: 0.5rem;
+}
+
+.sectionHeader p {
+  font-size: 1.2rem;
+  color: var(--color-text-muted);
+}
+
+.servicesGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+}
+
+.serviceCard {
+  background-color: var(--color-white);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid rgba(0,0,0,0.03);
+  display: flex;
+  flex-direction: column;
+}
+
+.serviceCard:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.serviceImageWrapper {
+  position: relative;
+  width: 100%;
+  height: 250px;
+  overflow: hidden;
+}
+
+.serviceImage {
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.serviceCard:hover .serviceImage {
+  transform: scale(1.05);
+}
+
+.serviceCardContent {
+  padding: 2.5rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.serviceCardContent h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.serviceCardContent p {
+  color: var(--color-text-muted);
+  margin-bottom: 2rem;
+  flex-grow: 1;
+}
+
+.whyUs {
+  padding: 6rem 0;
+  background-color: var(--color-secondary);
+}
+
+.whyUsTitle {
+  text-align: center;
+  font-size: 2.8rem;
+  letter-spacing: -1px;
+}
+
+.benefitsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3rem;
+  margin-top: 4rem;
+}
+
+.benefit {
+  text-align: center;
+  padding: 2.5rem;
+  background-color: var(--color-white);
+  border-radius: 24px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.03);
+}
+
+.benefitIcon {
+  width: 60px;
+  height: 60px;
+  background-color: var(--color-accent-light);
+  color: var(--color-primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin: 0 auto 1.5rem;
+  font-weight: bold;
+}
+
+.benefit h4 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+}
+
+.benefit p {
+  color: var(--color-text-muted);
+}
+
+@media (max-width: 992px) {
+  .hero {
+    padding: 6rem 0;
+  }
+
+  .heroContainer {
+    flex-direction: column;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+  }
+  
+  .hero::before {
+    display: none;
+  }
+  
+  .heroImageWrapper {
+    position: absolute;
+    top: -6rem; /* Counter the hero padding */
+    left: 0;
+    width: 100%;
+    height: calc(100% + 12rem);
+    z-index: 0;
+    opacity: 0.15;
+  }
+
+  .heroImageShape {
+    display: none;
+  }
+
+  .heroImage {
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    border-radius: 0;
+    box-shadow: none;
+    object-fit: cover;
+  }
+  
+  .heroTitle {
+    font-size: 3rem;
+  }
+  
+  .heroActions {
+    justify-content: center;
+  }
+  
+  .servicesGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .benefitsGrid {
+    grid-template-columns: 1fr;
+  }
+}
