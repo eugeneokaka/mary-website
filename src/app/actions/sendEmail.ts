@@ -12,7 +12,7 @@ export async function sendEmail(formData: FormData) {
   try {
     const { data, error } = await resend.emails.send({
       from: 'Oasis Wellness Contact Form <info@contact.oasiswellnessconsultancy.com>',
-      to: ['eugeneokaka@gmail.com'],
+      to: ['maryathat@gmail.com'],
       subject: `New Contact Form Submission from ${name}`,
       html: `
         <h2>New Contact Form Submission</h2>

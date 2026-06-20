@@ -9,7 +9,7 @@ export default function Home() {
       <section className={styles.hero}>
         <div className={`container ${styles.heroContainer}`}>
           <div className={styles.heroContent}>
-            <h1 className={styles.heroTitle}>Evidence-Based Wellness Solutions for Modern Organizations</h1>
+            <h1 className={styles.heroTitle}>Evidence Based Wellness Solutions for Modern Organizations</h1>
             <p className={styles.heroSubtitle}>
               Helping health brands, corporates, and schools communicate wellness with credibility, clarity, and impact.
             </p>
@@ -99,7 +99,7 @@ export default function Home() {
             </div>
             <div className={styles.benefit}>
               <div className={styles.benefitIcon}>✓</div>
-              <h4>Evidence-Based</h4>
+              <h4>Evidence Based</h4>
               <p>Rooted in science, free from fads, and focused on practical solutions.</p>
             </div>
             <div className={styles.benefit}>
