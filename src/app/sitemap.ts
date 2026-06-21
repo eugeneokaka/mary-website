@@ -1,8 +1,7 @@
 import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  // Use a placeholder domain for now until the site is deployed to its real domain
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.oasiswellness.com';
+  const baseUrl = 'https://www.oasiswellnessconsultancy.com';
 
   return [
     {
