@@ -55,9 +55,7 @@ export default function Insights() {
               </div>
               <h2 className={styles.articleTitle}>{article.title}</h2>
               <p className={styles.excerpt}>{article.excerpt}</p>
-              <Link href="#" className={styles.readMore}>
-                Read Article &rarr;
-              </Link>
+
             </article>
           ))}
         </div>
