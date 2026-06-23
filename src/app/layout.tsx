@@ -14,6 +14,9 @@ export const metadata: Metadata = {
   },
   description: "Helping health brands, corporates, and schools communicate wellness with credibility, clarity, and impact.",
   keywords: ["Nutrition Consultant", "Wellness Consultant", "Corporate Wellness Training", "School Nutrition Programs", "Health Education", "Nutrition Workshops", "Health Communication Specialist"],
+  icons: {
+    icon: "/favicon.jpeg",
+  },
 };
 
 import Header from "@/components/Header";
