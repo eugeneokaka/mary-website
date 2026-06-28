@@ -1,40 +1,13 @@
+"use client";
+
 import React from 'react';
-import type { Metadata } from 'next';
 import Link from 'next/link';
 import styles from './Insights.module.css';
-
-export const metadata: Metadata = {
-  title: 'Insights & Blog | Oasis Wellness Consultancy',
-  description: 'Articles and insights on nutrition science, workplace wellness, school nutrition, health communication, lifestyle medicine, and wellness trends.',
-};
+import { useQuery } from "convex/react";
+import { api } from "../../../convex/_generated/api";
 
 export default function Insights() {
-  const articles = [
-    {
-      title: 'The Role of Nutrition Science in Workplace Productivity',
-      category: 'Workplace Wellness',
-      date: 'June 2026',
-      excerpt: 'Discover how evidence-based nutritional strategies can enhance focus, reduce absenteeism, and boost overall team performance.',
-    },
-    {
-      title: 'Effective Health Communication: Building Trust with Your Audience',
-      category: 'Health Communication',
-      date: 'May 2026',
-      excerpt: 'Learn why scientific accuracy combined with relatable messaging is the key to successful health marketing campaigns.',
-    },
-    {
-      title: 'School Nutrition Programs That Actually Work',
-      category: 'School Nutrition',
-      date: 'April 2026',
-      excerpt: 'A deep dive into creating sustainable, appealing, and nutritious meal programs for educational institutions.',
-    },
-    {
-      title: 'Separating Fact from Fiction: Lifestyle Medicine Trends',
-      category: 'Lifestyle Medicine',
-      date: 'March 2026',
-      excerpt: 'An analysis of current wellness trends—what the science supports and what is just another fad.',
-    }
-  ];
+  const dynamicBlogs = useQuery(api.blogs.get);
 
   return (
     <div className={styles.insightsPage}>
@@ -47,15 +20,25 @@ export default function Insights() {
         </div>
 
         <div className={styles.grid}>
-          {articles.map((article, index) => (
-            <article key={index} className={styles.card}>
+          {/* Render dynamic blogs from Convex */}
+          {dynamicBlogs && dynamicBlogs.map((blog) => (
+            <article key={blog._id} className={styles.card}>
+              {blog.imageUrl && (
+                <div style={{ width: '100%', height: '200px', position: 'relative', marginBottom: '1.5rem', borderRadius: '4px', overflow: 'hidden' }}>
+                  <img src={blog.imageUrl} alt={blog.title} style={{ objectFit: 'cover', width: '100%', height: '100%' }} />
+                </div>
+              )}
               <div className={styles.cardHeader}>
-                <span className={styles.category}>{article.category}</span>
-                <span className={styles.date}>{article.date}</span>
+                <span className={styles.category}>Community Blog</span>
+                <span className={styles.date}>{new Date(blog.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</span>
               </div>
-              <h2 className={styles.articleTitle}>{article.title}</h2>
-              <p className={styles.excerpt}>{article.excerpt}</p>
-
+              <h2 className={styles.articleTitle}>{blog.title}</h2>
+              <p className={styles.excerpt}>
+                {blog.content.length > 150 ? `${blog.content.substring(0, 150)}...` : blog.content}
+              </p>
+              <Link href={`/insights/${blog._id}`} className={styles.readMore}>
+                Read More &rarr;
+              </Link>
             </article>
           ))}
         </div>

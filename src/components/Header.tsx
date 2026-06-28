@@ -1,14 +1,30 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import styles from './Header.module.css';
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
+  useEffect(() => {
+    // Check for the auth cookie. It re-runs whenever the route changes (e.g. after login)
+    const hasToken = document.cookie.includes("blog_jwt=");
+    setIsLoggedIn(hasToken);
+  }, [pathname]);
 
   const toggleMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const handleLogout = () => {
+    document.cookie = "blog_jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    setIsLoggedIn(false);
+    setIsMobileMenuOpen(false);
+    router.push('/');
   };
 
   return (
@@ -29,6 +45,12 @@ export default function Header() {
           <Link href="/about" className={styles.link} onClick={() => setIsMobileMenuOpen(false)}>About</Link>
           <Link href="/services" className={styles.link} onClick={() => setIsMobileMenuOpen(false)}>Services</Link>
           <Link href="/insights" className={styles.link} onClick={() => setIsMobileMenuOpen(false)}>Insights</Link>
+          {isLoggedIn && (
+            <>
+              <Link href="/dashboard" className={styles.link} onClick={() => setIsMobileMenuOpen(false)}>Dashboard</Link>
+              <button className={`${styles.link} ${styles.logoutBtn}`} onClick={handleLogout}>Logout</button>
+            </>
+          )}
           <Link href="/contact" className={styles.link} onClick={() => setIsMobileMenuOpen(false)}>Contact</Link>
         </nav>
       </div>
