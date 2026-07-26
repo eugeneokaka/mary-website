@@ -46,13 +46,13 @@ export default function About() {
               I&apos;m Mary, a Nutritionist and Wellness Consultant with over 10 years of experience helping people separate nutrition facts from nutrition fiction.
             </p>
             <p>
-              After graduating top of my class with a Bachelor&apos;s Degree in Nutrition from Kenyatta University and becoming licensed by the Kenya Nutritionists and Dieticians Institute (KNDI), I spent years working with clients and patients. One thing became clear: people are surrounded by health advice, but not all of it is good advice. Between social media gurus, miracle cures, and the latest &quot;life-changing&quot; diet trends, it&apos;s easy to see why so many people are confused.
+              After graduating top of my class with a Bachelor&apos;s Degree in Nutrition from Kenyatta University and becoming licensed by the Kenya Nutritionists and Dieticians Institute (KNDI), I spent years working with clients and patients. One thing became clear: people are surrounded by health advice, but not all of it is good advice. Between social media gurus, miracle cures, and the latest life changing diet trends, it&apos;s easy to see why so many people are confused.
             </p>
             <p>
               <strong>That&apos;s why I founded Oasis Wellness Consultancy.</strong>
             </p>
             <p>
-              My mission is simple: to help organizations share health and wellness information that is accurate, engaging, and actually useful. No fear-mongering. No fad diets. No detox teas promising enlightenment.
+              My mission is simple: to help organizations share health and wellness information that is accurate, engaging, and actually useful. No fear mongering. No fad diets. No detox teas promising enlightenment.
             </p>
             <p>
               Through health communication, social media strategy, and wellness training, I help brands, schools, and corporates educate their audiences in ways that build trust, inspire action, and create real value.
@@ -61,13 +61,13 @@ export default function About() {
             <h3 className={styles.sectionTitle}>My Philosophy</h3>
             <p>I believe health information should be:</p>
             <ul className={styles.philosophyList}>
-              <li><strong>Science-based</strong>, not trend-based.</li>
+              <li><strong>Science based</strong>, not trend-based.</li>
               <li><strong>Practical</strong>, not overwhelming.</li>
               <li><strong>Engaging</strong>, not boring.</li>
               <li><strong>Honest</strong>, even when the answer isn&apos;t &quot;drink this miracle smoothie.&quot;</li>
             </ul>
             <p>
-              Because when people receive credible information in a way they can understand, they&apos;re far more likely to make healthier choices—and keep making them.
+              Because when people receive credible information in a way they can understand, they&apos;re far more likely to make healthier choices and keep making them.
             </p>
           </div>
         </div>

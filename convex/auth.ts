@@ -1,7 +1,9 @@
 import { mutation } from "./_generated/server";
+import type { QueryCtx, MutationCtx } from "./_generated/server";
 import { v } from "convex/values";
 import bcrypt from "bcryptjs";
 import { SignJWT, jwtVerify } from "jose";
+import { Id } from "./_generated/dataModel";
 
 export const signUp = mutation({
   args: {
@@ -87,7 +89,24 @@ export async function verifyToken(token: string) {
     );
     const { payload } = await jwtVerify(token, secretKey);
     return payload; // Contains userId and username
-  } catch (error) {
+  } catch {
     throw new Error("Invalid or expired token");
   }
+}
+
+/**
+ * Verifies the JWT, extracts the user id, and confirms the user actually exists
+ * in the database. Use this in any mutation/query that must be authenticated.
+ * Returns the user document and the decoded payload.
+ */
+export async function requireUser(ctx: QueryCtx | MutationCtx, token: string) {
+  const payload = await verifyToken(token);
+  const userId = payload.userId as Id<"users">;
+
+  const user = await ctx.db.get(userId);
+  if (!user) {
+    throw new Error("User account no longer exists");
+  }
+
+  return { payload, user, userId };
 }

@@ -1,6 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Button from '@/components/Button';
+import InsightsPreview from '@/components/InsightsPreview';
 import styles from './Home.module.css';
 
 export default function Home() {
@@ -9,7 +10,7 @@ export default function Home() {
       <section className={styles.hero}>
         <div className={`container ${styles.heroContainer}`}>
           <div className={styles.heroContent}>
-            <h1 className={styles.heroTitle}>Evidence Based Wellness Solutions for Modern Organizations</h1>
+            <h1 className={styles.heroTitle}>Credibility-First Health Communication for Brands That Can’t Afford to Get It Wrong</h1>
             <p className={styles.heroSubtitle}>
               Helping health brands, corporates, and schools communicate wellness with credibility, clarity, and impact.
             </p>
@@ -21,7 +22,7 @@ export default function Home() {
           <div className={styles.heroImageWrapper}>
             <div className={styles.heroImageShape}></div>
             <Image 
-              src="/ella-olsson-KPDbRyFOTnE-unsplash.jpg" 
+              src="/hero.jpg" 
               alt="Healthy vibrant wellness" 
               width={600} 
               height={600} 
@@ -50,38 +51,56 @@ export default function Home() {
             <h2>Our Core Services</h2>
             <p>Tailored solutions for your organization&apos;s unique needs.</p>
           </div>
-          <div className={styles.servicesGrid}>
+          <div className={styles.servicesGrid + ' ' + styles.servicesGridThree}>
             <div className={styles.serviceCard}>
               <div className={styles.serviceImageWrapper}>
-                <Image 
-                  src="/towfiqu-barbhuiya-G5w8OSzHDhI-unsplash.jpg"
-                  alt="Social Media Management"
+                <Image
+                  src="/socila-media.jpg"
+                  alt="Health communication and social media management"
                   fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  priority
                   className={styles.serviceImage}
                 />
               </div>
               <div className={styles.serviceCardContent}>
-                <h3>Health & Wellness Social Media Management</h3>
-                <p>Strategic content development and social media management for health and wellness brands. We create credible, engaging content that educates audiences and strengthens brand trust.</p>
-                <Button href="/services#social-media" variant="secondary">Learn More</Button>
+                <h3>Health Communication</h3>
+                <p>Credibility-first content and social media strategy for health brands that can&apos;t afford to get it wrong.</p>
+                <Button href="/services#health-communication" variant="secondary">Learn More</Button>
               </div>
             </div>
-            
+
             <div className={styles.serviceCard}>
               <div className={styles.serviceImageWrapper}>
-                <Image 
-                  src="/joseph-gonzalez-fdlZBWIP0aM-unsplash.jpg"
-                  alt="Wellness Training"
+                <Image
+                  src="/children-studying.jpg"
+                  alt="School nutrition and wellness program"
                   fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
+                  sizes="(max-width: 768px) 100vw, 33vw"
                   className={styles.serviceImage}
                 />
               </div>
               <div className={styles.serviceCardContent}>
-                <h3>Corporate & School Wellness Training</h3>
-                <p>Interactive wellness education programs designed to improve health knowledge, productivity, and long-term wellbeing. Engaging sessions on healthy eating and lifestyle habits.</p>
-                <Button href="/services#training" variant="secondary">Learn More</Button>
+                <h3>School Nutrition &amp; Wellness</h3>
+                <p>Evidence-based nutrition solutions that create healthier learning environments.</p>
+                <Button href="/services#school-nutrition" variant="secondary">Learn More</Button>
+              </div>
+            </div>
+
+            <div className={styles.serviceCard}>
+              <div className={styles.serviceImageWrapper}>
+                <Image
+                  src="/people-in-meeting.jpg"
+                  alt="Corporate wellness and performance workshop"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className={styles.serviceImage}
+                />
+              </div>
+              <div className={styles.serviceCardContent}>
+                <h3>Corporate Wellness Workshops</h3>
+                <p>Performance workshops that help teams feel better, think better, and perform better.</p>
+                <Button href="/services#corporate-wellness" variant="secondary">Learn More</Button>
               </div>
             </div>
           </div>
@@ -107,6 +126,67 @@ export default function Home() {
               <h4>Targeted Communication</h4>
               <p>We know how to translate complex science into engaging, clear messaging.</p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============ Our Process ============ */}
+      <section className={styles.process}>
+        <div className="container">
+          <div className={styles.sectionHeader}>
+            <h2>Our Process</h2>
+            <p>A simple, proven approach to building credible health communication.</p>
+          </div>
+          <div className={styles.processSteps}>
+            <div className={styles.processStep}>
+              <div className={styles.processNumber}>01</div>
+              <h3>Discover</h3>
+              <p>We learn about your brand, audience, and goals to understand what credibility means for you.</p>
+            </div>
+            <div className={styles.processStep}>
+              <div className={styles.processNumber}>02</div>
+              <h3>Strategize</h3>
+              <p>We design a credibility-first communication plan aligned with your expertise and business objectives.</p>
+            </div>
+            <div className={styles.processStep}>
+              <div className={styles.processNumber}>03</div>
+              <h3>Create</h3>
+              <p>We craft evidence-based content that informs, engages, and earns the trust of your audience.</p>
+            </div>
+            <div className={styles.processStep}>
+              <div className={styles.processNumber}>04</div>
+              <h3>Refine</h3>
+              <p>We measure performance, gather feedback, and continuously improve to keep your message sharp.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============ Insights Preview ============ */}
+      <section className={styles.insightsPreview}>
+        <div className="container">
+          <div className={styles.sectionHeader}>
+            <h2>Latest Insights</h2>
+            <p>Evidence-based perspectives on nutrition, wellness, and health communication.</p>
+          </div>
+          <InsightsPreview />
+          <div className={styles.insightsPreviewCTA}>
+            <Button href="/insights" variant="outline">View All Insights</Button>
+          </div>
+        </div>
+      </section>
+
+      {/* ============ Final CTA ============ */}
+      <section className={styles.finalCTA}>
+        <div className="container">
+          <div className={styles.finalCTAInner}>
+            <h2>Let&apos;s Build Trust Together</h2>
+            <p>
+              Whatever your goal, launching a wellness brand, growing a healthcare
+              organisation, or leading a public health campaign, we&apos;re here to help
+              you communicate with clarity and confidence.
+            </p>
+            <Button href="/contact" variant="primary">Book a Discovery Call</Button>
           </div>
         </div>
       </section>

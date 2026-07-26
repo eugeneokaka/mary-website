@@ -1,41 +1,43 @@
 "use client";
 
-import React, { use, useEffect, useState } from "react";
+import React, { use, useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import RichContentViewer from "@/components/RichContentViewer";
 import styles from "./BlogDetail.module.css";
 
 export default function BlogDetail({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
   const blogId = resolvedParams.id as Id<"blogs">;
-  
+
   const blog = useQuery(api.blogs.getById, { blogId });
   const removeBlog = useMutation(api.blogs.remove);
   const router = useRouter();
-  
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
 
-  useEffect(() => {
-    // Check if the user has the auth cookie
-    setIsLoggedIn(document.cookie.includes("blog_jwt="));
-  }, []);
+  const [isLoggedIn] = useState(
+    () =>
+      typeof document !== "undefined" && document.cookie.includes("blog_jwt="),
+  );
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDelete = async () => {
     if (!confirm("Are you sure you want to delete this blog? This action cannot be undone.")) return;
-    
+
     setIsDeleting(true);
     try {
-      const token = document.cookie.split("; ").find(row => row.startsWith("blog_jwt="))?.split("=")[1];
+      const token = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("blog_jwt="))
+        ?.split("=")[1];
       if (!token) throw new Error("Not authenticated");
-      
+
       await removeBlog({ token, blogId });
       router.push("/insights");
-    } catch (err: any) {
-      alert(err.message || "Failed to delete blog");
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : "Failed to delete blog");
       setIsDeleting(false);
     }
   };
@@ -43,8 +45,9 @@ export default function BlogDetail({ params }: { params: Promise<{ id: string }>
   if (blog === undefined) {
     return (
       <div className={styles.pageContainer}>
-        <div className="container" style={{ textAlign: 'center', padding: '5rem' }}>
-          Loading article...
+        <div className={`container ${styles.loadingState}`}>
+          <div className={styles.loadingBar} />
+          <p>Loading article…</p>
         </div>
       </div>
     );
@@ -53,9 +56,12 @@ export default function BlogDetail({ params }: { params: Promise<{ id: string }>
   if (blog === null) {
     return (
       <div className={styles.pageContainer}>
-        <div className="container" style={{ textAlign: 'center', padding: '5rem' }}>
-          <h1>Blog not found</h1>
-          <Link href="/insights" className={styles.backLink}>&larr; Back to Insights</Link>
+        <div className={`container ${styles.notFoundState}`}>
+          <h1>Article not found</h1>
+          <p>This article may have been removed or moved.</p>
+          <Link href="/insights" className={styles.backLink}>
+            &larr; Back to Insights
+          </Link>
         </div>
       </div>
     );
@@ -63,41 +69,89 @@ export default function BlogDetail({ params }: { params: Promise<{ id: string }>
 
   return (
     <div className={styles.pageContainer}>
-      <div className={`container ${styles.blogContainer}`}>
-        <div className={styles.actionRow}>
-          <Link href="/insights" className={styles.backLink} style={{ marginBottom: 0 }}>
-            &larr; Back to all Insights
-          </Link>
-          
-          {isLoggedIn && (
-            <button 
-              onClick={handleDelete} 
-              className={styles.deleteButton}
-              disabled={isDeleting}
-            >
-              {isDeleting ? "Deleting..." : "Delete Blog"}
-            </button>
+      <article className={styles.article}>
+        <div className={`container ${styles.articleInner}`}>
+          {/* Top bar */}
+          <div className={styles.actionRow}>
+            <Link href="/insights" className={styles.backLink}>
+              &larr; All insights
+            </Link>
+            <div className={styles.actionButtons}>
+              {isLoggedIn && (
+                <>
+                  <Link href={`/dashboard?edit=${blog._id}`} className={styles.editButton}>
+                    Edit
+                  </Link>
+                  <button
+                    onClick={handleDelete}
+                    className={styles.deleteButton}
+                    disabled={isDeleting}
+                  >
+                    {isDeleting ? "Deleting…" : "Delete"}
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* Header */}
+          <header className={styles.header}>
+            <span className={styles.eyebrow}>Insights</span>
+            <h1 className={styles.title}>{blog.title}</h1>
+            <div className={styles.metaBar}>
+              <span className={styles.date}>
+                {new Date(blog.createdAt).toLocaleDateString(undefined, {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </span>
+              <span className={styles.readTime}>{estimateReadTime(blog.content)} min read</span>
+            </div>
+          </header>
+
+          {/* Cover image */}
+          {blog.imageUrl && (
+            <div className={styles.imageWrapper}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={blog.imageUrl} alt={blog.title} className={styles.image} />
+            </div>
           )}
-        </div>
-        
-        <div className={styles.header}>
-          <h1 className={styles.title}>{blog.title}</h1>
-          <div className={styles.meta}>
-            Published on {new Date(blog.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
-          </div>
-        </div>
 
-        {blog.imageUrl && (
-          <div className={styles.imageWrapper}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={blog.imageUrl} alt={blog.title} className={styles.image} />
+          {/* Rich content */}
+          <div className={styles.content}>
+            <RichContentViewer content={blog.content} />
           </div>
-        )}
 
-        <div className={styles.content}>
-          {blog.content}
+          {/* Footer */}
+          <footer className={styles.articleFooter}>
+            <Link href="/insights" className={styles.backLink}>
+              &larr; Back to all insights
+            </Link>
+          </footer>
         </div>
-      </div>
+      </article>
     </div>
   );
+}
+
+function estimateReadTime(content: string): number {
+  if (!content) return 1;
+  let text = content;
+  try {
+    const parsed = JSON.parse(content);
+    text = extractText(parsed);
+  } catch {
+    // already plain text
+  }
+  const words = text.split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.ceil(words / 200));
+}
+
+function extractText(node: unknown): string {
+  if (!node || typeof node !== "object") return "";
+  const n = node as { type?: string; text?: string; content?: unknown[] };
+  if (n.type === "text" && typeof n.text === "string") return n.text;
+  if (Array.isArray(n.content)) return n.content.map(extractText).join("");
+  return "";
 }

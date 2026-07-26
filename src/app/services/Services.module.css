@@ -1,14 +1,25 @@
 .servicesPage {
-  padding: 5rem 0;
+  padding: 5rem 0 2rem;
   background-color: var(--background);
+  scroll-behavior: smooth;
 }
 
+.servicesPage section[id] {
+  scroll-margin-top: 2rem;
+}
+
+.container {
+  width: 100%;
+}
+
+/* ===================== Page header ===================== */
 .header {
   text-align: center;
-  margin-bottom: 5rem;
+  margin-bottom: 4rem;
   max-width: 800px;
   margin-left: auto;
   margin-right: auto;
+  padding: 0 1.5rem;
 }
 
 .title {
@@ -22,23 +33,151 @@
   color: var(--color-text-muted);
 }
 
-.serviceSection {
+.serviceBlock {
+  padding: 4rem 0;
+  position: relative;
+}
+
+/* ===================== Service navigation ===================== */
+.serviceNav {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  padding: 0 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.serviceNavLink {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
   background-color: var(--color-white);
-  padding: 4rem;
-  border-radius: 12px;
-  box-shadow: 0 5px 25px rgba(0,0,0,0.05);
-  margin-bottom: 4rem;
-  border-left: 6px solid var(--color-primary);
+  padding: 2rem 1.75rem;
+  border-radius: 16px;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
+  border-top: 4px solid var(--color-accent);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-top-color 0.2s ease;
 }
 
-.altSection {
-  border-left: 6px solid var(--color-accent);
+.serviceNavLink:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.1);
+  border-top-color: var(--color-primary);
 }
 
-.textContent h2 {
-  font-size: 2rem;
+.serviceNavFlagship {
+  border-top-color: var(--color-primary);
+}
+
+.serviceNavBadge {
+  position: absolute;
+  top: 1rem;
+  right: 1.25rem;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.serviceNavNumber {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  letter-spacing: 2px;
+}
+
+.serviceNavLink:hover .serviceNavNumber {
   color: var(--color-primary);
+}
+
+.serviceNavTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  line-height: 1.2;
+}
+
+.serviceNavDesc {
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+.blockAlt {
+  background-color: var(--color-accent-light);
+}
+
+/* Flagship tag */
+.flagshipTag {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.flagshipTag span {
+  display: inline-block;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  padding: 0.5rem 1.5rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* ===================== Service intro (image + text) ===================== */
+.serviceIntro {
+  display: flex;
+  align-items: center;
+  gap: 4rem;
+  margin-bottom: 4rem;
+  padding: 0 1.5rem;
+}
+
+.introReversed {
+  flex-direction: row-reverse;
+}
+
+.serviceIntroContent {
+  flex: 1;
+}
+
+.serviceIntroImage {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.introImg {
+  width: 100%;
+  max-width: 480px;
+  height: auto;
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  object-fit: cover;
+}
+
+.eyebrow {
+  display: inline-block;
+  color: var(--color-accent);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
   margin-bottom: 1rem;
+}
+
+.serviceIntroContent h2 {
+  font-size: 2.25rem;
+  color: var(--color-primary);
+  margin-bottom: 1.25rem;
+  line-height: 1.2;
 }
 
 .lead {
@@ -48,34 +187,157 @@
   margin-bottom: 1.5rem;
 }
 
-.textContent p {
-  font-size: 1.1rem;
+.serviceIntroContent p {
+  font-size: 1.05rem;
   color: var(--foreground);
-  margin-bottom: 2rem;
+  margin-bottom: 1.25rem;
 }
 
-.textContent h3 {
-  font-size: 1.3rem;
+.closingLine {
+  font-weight: 600;
   color: var(--color-primary);
-  margin-top: 2.5rem;
+}
+
+/* ===================== Sub block (challenge / approach) ===================== */
+.subBlock {
+  max-width: 900px;
+  margin: 0 auto 4rem;
+  padding: 0 1.5rem;
+}
+
+.subHeading {
+  font-size: 1.75rem;
+  color: var(--color-primary);
   margin-bottom: 1rem;
 }
 
-.list {
-  list-style: none;
-  padding: 0;
+.subBlock p {
+  font-size: 1.05rem;
+  color: var(--foreground);
+  margin-bottom: 1.25rem;
+}
+
+.challengeGrid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
   margin-bottom: 2rem;
 }
 
-.list li {
-  position: relative;
-  padding-left: 1.5rem;
+.challengeItem {
+  background-color: var(--color-secondary);
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  color: var(--color-primary);
+  font-weight: 500;
+  border-left: 3px solid var(--color-accent);
 }
 
-.list li::before {
+.approachBox {
+  background-color: var(--color-white);
+  padding: 2rem;
+  border-radius: 16px;
+  border-left: 6px solid var(--color-primary);
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
+}
+
+.approachBox p {
+  margin-bottom: 0;
+  color: var(--color-primary);
+  font-size: 1.1rem;
+}
+
+/* ===================== Sub-services header ===================== */
+.subServicesHeader {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 2.5rem;
+  padding: 0 1.5rem;
+}
+
+.subServicesHeader h3 {
+  font-size: 1.75rem;
+  color: var(--color-primary);
+  margin-bottom: 0.5rem;
+}
+
+.subServicesSub {
+  font-size: 1.05rem;
+  color: var(--color-text-muted);
+}
+
+/* ===================== Sub-services grid ===================== */
+.subServicesGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.75rem;
+  padding: 0 1.5rem;
+}
+
+.subServiceCard,
+.workshopCard {
+  background-color: var(--color-white);
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
+  border-top: 4px solid var(--color-accent);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.subServiceCard:hover,
+.workshopCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+}
+
+.workshopCard {
+  border-top: 4px solid var(--color-primary);
+  grid-column: span 1;
+}
+
+/* The 5th workshop spans full width for balance */
+.workshopCard:nth-child(5) {
+  grid-column: span 2;
+}
+
+.subServiceCard h4,
+.workshopCard h4 {
+  font-size: 1.25rem;
+  color: var(--color-primary);
+  margin-bottom: 0.75rem;
+}
+
+.subServiceCard p,
+.workshopCard p {
+  font-size: 1rem;
+  color: var(--foreground);
+  margin-bottom: 1.25rem;
+}
+
+.listLabel {
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+/* ===================== Card list ===================== */
+.cardList {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.cardList li {
+  position: relative;
+  padding-left: 1.5rem;
+  font-size: 0.95rem;
+  color: var(--foreground);
+}
+
+.cardList li::before {
   content: '✓';
   position: absolute;
   left: 0;
@@ -83,37 +345,187 @@
   font-weight: bold;
 }
 
+/* Ideal-for tags */
+.idealFor {
+  margin-bottom: 1.25rem;
+}
+
+.idealFor > span {
+  display: block;
+  font-weight: 600;
+  color: var(--color-primary);
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
 .tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-bottom: 2.5rem;
+  gap: 0.5rem;
 }
 
 .tag {
   background-color: var(--color-secondary);
   color: var(--color-primary);
-  padding: 0.5rem 1rem;
+  padding: 0.4rem 0.9rem;
   border-radius: 20px;
-  font-size: 0.9rem;
+  font-size: 0.82rem;
   font-weight: 500;
 }
 
-.highlightBox {
-  background-color: var(--color-secondary);
-  padding: 1.5rem;
-  border-radius: 8px;
-  border-left: 4px solid var(--color-accent);
-  font-size: 1.1rem;
-  color: var(--color-primary);
+/* ===================== Workshop meta ===================== */
+.workshopMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #eee;
 }
 
-@media (max-width: 768px) {
-  .list {
+.workshopMeta span {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+/* ===================== Delivery & add-ons row ===================== */
+.deliveryRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.75rem;
+  margin-top: 4rem;
+  padding: 0 1.5rem;
+}
+
+.deliveryCard {
+  background-color: var(--color-white);
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
+  border-left: 6px solid var(--color-primary);
+}
+
+.deliveryCard h4 {
+  font-size: 1.25rem;
+  color: var(--color-primary);
+  margin-bottom: 1rem;
+}
+
+.deliveryCard p {
+  color: var(--foreground);
+  margin-bottom: 1rem;
+}
+
+.priceList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.priceList li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #eee;
+  font-size: 0.95rem;
+  color: var(--foreground);
+}
+
+.priceList li:last-child {
+  border-bottom: none;
+}
+
+.priceList li span:last-child {
+  font-weight: 600;
+  color: var(--color-primary);
+  white-space: nowrap;
+  padding-left: 1rem;
+}
+
+/* ===================== Service CTA ===================== */
+.serviceCTA {
+  text-align: center;
+  max-width: 700px;
+  margin: 4rem auto 0;
+  padding: 3rem 2rem;
+  background-color: var(--color-primary);
+  border-radius: 24px;
+  color: var(--color-white);
+}
+
+.serviceCTA h3 {
+  font-size: 1.75rem;
+  color: var(--color-white);
+  margin-bottom: 1rem;
+}
+
+.serviceCTA p {
+  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 2rem;
+}
+
+/* ===================== Responsive ===================== */
+@media (max-width: 900px) {
+  .subServicesGrid {
     grid-template-columns: 1fr;
   }
-  
-  .serviceSection {
-    padding: 2rem;
+
+  .serviceNav {
+    grid-template-columns: 1fr;
+  }
+
+  .workshopCard:nth-child(5) {
+    grid-column: span 1;
+  }
+
+  .deliveryRow {
+    grid-template-columns: 1fr;
+  }
+
+  .challengeGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .serviceIntro {
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  .introReversed {
+    flex-direction: column;
+  }
+
+  .serviceIntroImage {
+    order: -1;
+  }
+
+  .title {
+    font-size: 2.25rem;
+  }
+
+  .serviceIntroContent h2 {
+    font-size: 1.75rem;
+  }
+
+  .serviceBlock {
+    padding: 2.5rem 0;
+  }
+
+  .challengeGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .priceList li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.15rem;
+  }
+
+  .priceList li span:last-child {
+    padding-left: 0;
   }
 }

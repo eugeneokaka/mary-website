@@ -1,34 +1,21 @@
 .pageContainer {
-  padding: 5rem 0;
+  padding: 0 0 5rem;
   background-color: var(--background);
   min-height: 80vh;
   font-family: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-.blogContainer {
-  max-width: 800px;
+.article {
+  padding: 3rem 0 0;
+}
+
+.articleInner {
+  max-width: 760px;
   margin: 0 auto;
-  background-color: var(--color-white);
-  padding: 3rem 4rem;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  padding: 0 1.5rem;
 }
 
-.backLink {
-  display: inline-flex;
-  align-items: center;
-  margin-bottom: 2.5rem;
-  color: var(--color-accent);
-  font-weight: 600;
-  text-decoration: none;
-  transition: color 0.3s;
-  font-size: 1.05rem;
-}
-
-.backLink:hover {
-  color: var(--color-primary);
-}
-
+/* ===================== Top action row ===================== */
 .actionRow {
   display: flex;
   justify-content: space-between;
@@ -36,15 +23,52 @@
   margin-bottom: 3rem;
 }
 
+.actionButtons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-accent);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  font-size: 1rem;
+}
+
+.backLink:hover {
+  color: var(--color-primary);
+}
+
+.editButton {
+  background-color: transparent;
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.editButton:hover {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+}
+
 .deleteButton {
   background-color: transparent;
   color: #dc2626;
   border: 1px solid #dc2626;
   padding: 0.5rem 1.25rem;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
-  transition: all 0.2s;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
 }
 
 .deleteButton:hover:not(:disabled) {
@@ -57,30 +81,75 @@
   cursor: not-allowed;
 }
 
+/* ===================== Header ===================== */
 .header {
-  margin-bottom: 3rem;
-  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.eyebrow {
+  display: inline-block;
+  color: var(--color-accent);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
 }
 
 .title {
-  font-size: 3.5rem;
+  font-size: 2.75rem;
   color: var(--color-primary);
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
   line-height: 1.2;
+  letter-spacing: -0.5px;
 }
 
-.meta {
+.metaBar {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
   color: var(--color-text-muted);
-  font-size: 1.1rem;
+  font-size: 0.95rem;
 }
 
+.date {
+  display: inline-flex;
+  align-items: center;
+}
+
+.date::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--color-accent);
+  margin-right: 0.5rem;
+}
+
+.readTime {
+  display: inline-flex;
+  align-items: center;
+}
+
+.readTime::before {
+  content: "";
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: var(--color-text-muted);
+  margin-right: 0.5rem;
+}
+
+/* ===================== Cover image ===================== */
 .imageWrapper {
   width: 100%;
-  max-height: 500px;
-  border-radius: 8px;
+  max-height: 450px;
+  border-radius: 16px;
   overflow: hidden;
   margin-bottom: 3rem;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
 .image {
@@ -90,21 +159,84 @@
   display: block;
 }
 
+/* ===================== Content ===================== */
 .content {
-  font-size: 1.2rem;
-  line-height: 1.9;
-  color: var(--foreground);
-  white-space: pre-wrap; /* Preserves paragraphs from textarea */
+  margin-bottom: 4rem;
 }
 
+/* ===================== Footer ===================== */
+.articleFooter {
+  padding-top: 2.5rem;
+  border-top: 1px solid #eee;
+}
+
+/* ===================== States ===================== */
+.loadingState {
+  text-align: center;
+  padding: 6rem 2rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.loadingState p {
+  color: var(--color-text-muted);
+  margin-top: 1rem;
+}
+
+.loadingBar {
+  width: 60px;
+  height: 4px;
+  margin: 0 auto 1rem;
+  background: linear-gradient(90deg, var(--color-accent), var(--color-accent-light));
+  border-radius: 2px;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; transform: scaleX(0.7); }
+  50% { opacity: 1; transform: scaleX(1); }
+}
+
+.notFoundState {
+  text-align: center;
+  padding: 6rem 2rem;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.notFoundState h1 {
+  font-size: 2.25rem;
+  margin-bottom: 1rem;
+}
+
+.notFoundState p {
+  color: var(--color-text-muted);
+  margin-bottom: 2rem;
+}
+
+/* ===================== Responsive ===================== */
 @media (max-width: 768px) {
-  .blogContainer {
-    padding: 2rem;
-  }
   .title {
-    font-size: 2.5rem;
+    font-size: 2rem;
   }
-  .content {
-    font-size: 1.1rem;
+
+  .metaBar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .actionRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .actionButtons {
+    width: 100%;
+  }
+
+  .imageWrapper {
+    max-height: 280px;
   }
 }

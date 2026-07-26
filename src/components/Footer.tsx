@@ -9,7 +9,7 @@ export default function Footer() {
         <div className={styles.column}>
           <h3 className={styles.brand}>Oasis Wellness Consultancy</h3>
           <p className={styles.description}>
-            Evidence-Based Wellness Solutions for Modern Organizations. Helping you communicate health information effectively.
+            Evidence-Based Wellness Solutions for Modern Organizations.
           </p>
         </div>
         
@@ -26,7 +26,7 @@ export default function Footer() {
 
         <div className={styles.column}>
           <h4 className={styles.title}>Contact Us</h4>
-          <p className={styles.contactItem}>maryathat@gmail.com</p>
+          <p className={styles.contactItem}>oasiswellnessconsultancy@gmail.com</p>
           <p className={styles.contactItem}>+254 721 427 803</p>
           <div className={styles.social}>
             <a href="https://www.linkedin.com/in/mary-adhiambo/" className={styles.socialLink} aria-label="LinkedIn">

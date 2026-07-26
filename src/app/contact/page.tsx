@@ -29,7 +29,7 @@ export default function Contact() {
             <div className={styles.contactDetails}>
               <div className={styles.detailItem}>
                 <h3>Email</h3>
-                <p>maryathat@gmail.com</p>
+                <p>oasiswellnessconsultancy@gmail.com</p>
               </div>
               <div className={styles.detailItem}>
                 <h3>Phone</h3>
