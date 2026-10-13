@@ -1,118 +1,112 @@
-import { mutation } from "./_generated/server";
+import { createClient, type GenericCtx } from "@convex-dev/better-auth";
+import { convex } from "@convex-dev/better-auth/plugins";
+import { betterAuth } from "better-auth/minimal";
+import { emailOTP } from "better-auth/plugins/email-otp";
+import { APIError, createAuthMiddleware } from "better-auth/api";
+import { components } from "./_generated/api";
+import type { DataModel } from "./_generated/dataModel";
+import { query } from "./_generated/server";
 import type { QueryCtx, MutationCtx } from "./_generated/server";
-import { v } from "convex/values";
-import bcrypt from "bcryptjs";
-import { SignJWT, jwtVerify } from "jose";
-import { Id } from "./_generated/dataModel";
+import authConfig from "./auth.config";
+import { sendOtpEmail } from "./email";
 
-function getJwtSecret(): Uint8Array {
-  const secret = process.env.JWT_SECRET;
-  if (!secret) {
-    throw new Error(
-      "JWT_SECRET is not set. Configure it with `npx convex env set JWT_SECRET <value>`.",
-    );
-  }
-  return new TextEncoder().encode(secret);
+const siteUrl = process.env.SITE_URL ?? "http://localhost:3000";
+
+// Comma-separated list of Google/email addresses allowed to manage content.
+function allowedEmails(): string[] {
+  return (process.env.ALLOWED_EMAILS ?? "")
+    .split(",")
+    .map((email) => email.trim().toLowerCase())
+    .filter(Boolean);
 }
 
-export const signUp = mutation({
-  args: {
-    username: v.string(),
-    password: v.string(),
-  },
-  handler: async (ctx, args) => {
-    // Check if the username is already taken
-    const existingUser = await ctx.db
-      .query("users")
-      .withIndex("by_username", (q) => q.eq("username", args.username))
-      .first();
+function isAllowedEmail(email: string | null | undefined): boolean {
+  if (!email) return false;
+  return allowedEmails().includes(email.toLowerCase());
+}
 
-    if (existingUser) {
-      throw new Error("Username already taken");
-    }
+export const authComponent = createClient<DataModel>(components.betterAuth);
 
-    // Hash the password synchronously because Convex mutations don't support setTimeout
-    const saltRounds = 10;
-    const hashedPassword = bcrypt.hashSync(args.password, saltRounds);
+export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
+  return {
+    baseURL: siteUrl,
+    secret: process.env.BETTER_AUTH_SECRET,
+    trustedOrigins: [
+      "http://localhost:3000",
+      "https://oasiswellnessconsultancy.com",
+      "https://www.oasiswellnessconsultancy.com",
+    ],
+    database: authComponent.adapter(ctx),
+    socialProviders: {
+      google: {
+        clientId: process.env.GOOGLE_CLIENT_ID as string,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      },
+    },
+    // Reject non-allowlisted emails before any email is sent or any OTP is stored.
+    hooks: {
+      before: createAuthMiddleware(async (ctx) => {
+        if (ctx.path === "/email-otp/send-verification-otp") {
+          const email = (ctx.body as { email?: string } | undefined)?.email;
+          if (!isAllowedEmail(email)) {
+            throw new APIError("FORBIDDEN", { message: "You are not authorised" });
+          }
+        }
+      }),
+    },
+    // Reject non-allowlisted emails before a user row is created (e.g. Google sign-in).
+    databaseHooks: {
+      user: {
+        create: {
+          before: async (user: { email: string }) => {
+            if (!isAllowedEmail(user.email)) {
+              throw new APIError("FORBIDDEN", { message: "You are not authorised" });
+            }
+            return { data: user };
+          },
+        },
+      },
+    },
+    plugins: [
+      convex({ authConfig }),
+      emailOTP({
+        otpLength: 6,
+        expiresIn: 300,
+        storeOTP: "hashed",
+        async sendVerificationOTP({ email, otp }) {
+          await sendOtpEmail(email, otp);
+        },
+      }),
+    ],
+  };
+};
 
-    // Insert the new user
-    const userId = await ctx.db.insert("users", {
-      username: args.username,
-      password: hashedPassword,
-    });
+export const createAuth = (ctx: GenericCtx<DataModel>) =>
+  betterAuth(createAuthOptions(ctx));
 
-    return {
-      success: true,
-      userId,
-      message: "User created successfully",
-    };
+// Tells the client who is signed in and whether they are authorised.
+// Returns null when nobody is signed in.
+export const viewer = query({
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) return null;
+
+    const email = identity.email?.toLowerCase() ?? null;
+    return { email, authorized: isAllowedEmail(email) };
   },
 });
 
-export const login = mutation({
-  args: {
-    username: v.string(),
-    password: v.string(),
-  },
-  handler: async (ctx, args) => {
-    // Find the user
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_username", (q) => q.eq("username", args.username))
-      .first();
-
-    if (!user) {
-      throw new Error("Invalid username or password");
-    }
-
-    // Verify password
-    const isPasswordValid = bcrypt.compareSync(args.password, user.password);
-    
-    if (!isPasswordValid) {
-      throw new Error("Invalid username or password");
-    }
-
-    // Create JWT token
-    const secretKey = getJwtSecret();
-    
-    const token = await new SignJWT({ userId: user._id, username: user.username })
-      .setProtectedHeader({ alg: "HS256" })
-      .setIssuedAt()
-      .setExpirationTime("7d") // Token valid for 7 days
-      .sign(secretKey);
-
-    return {
-      success: true,
-      token,
-      userId: user._id,
-      username: user.username
-    };
-  },
-});
-
-export async function verifyToken(token: string) {
-  try {
-    const secretKey = getJwtSecret();
-    const { payload } = await jwtVerify(token, secretKey);
-    return payload; // Contains userId and username
-  } catch {
-    throw new Error("Invalid or expired token");
-  }
-}
-
-/**
- * Verifies the JWT, extracts the user id, and confirms the user actually exists
- * in the database. Use this in any mutation/query that must be authenticated.
- * Returns the user document and the decoded payload.
- */
-export async function requireUser(ctx: QueryCtx | MutationCtx, token: string) {
-  const payload = await verifyToken(token);
-  const userId = payload.userId as Id<"users">;
-
-  const user = await ctx.db.get(userId);
-  if (!user) {
-    throw new Error("User account no longer exists");
+// Server-side authorization guard for content management functions.
+export async function requireAuthor(ctx: QueryCtx | MutationCtx) {
+  const identity = await ctx.auth.getUserIdentity();
+  if (!identity) {
+    throw new Error("Not authenticated");
   }
 
-  return { payload, user, userId };
+  if (!isAllowedEmail(identity.email)) {
+    throw new Error("You are not authorised");
+  }
+
+  return identity;
 }

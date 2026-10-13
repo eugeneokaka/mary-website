@@ -7,6 +7,7 @@ import { Id } from "../../../../convex/_generated/dataModel";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import RichContentViewer from "@/components/RichContentViewer";
+import { authClient } from "@/lib/auth-client";
 import styles from "./BlogDetail.module.css";
 
 export default function BlogDetail({ params }: { params: Promise<{ id: string }> }) {
@@ -14,13 +15,12 @@ export default function BlogDetail({ params }: { params: Promise<{ id: string }>
   const blogId = resolvedParams.id as Id<"blogs">;
 
   const blog = useQuery(api.blogs.getById, { blogId });
+  const { data: session } = authClient.useSession();
   const removeBlog = useMutation(api.blogs.remove);
   const router = useRouter();
 
-  const [isLoggedIn] = useState(
-    () =>
-      typeof document !== "undefined" && document.cookie.includes("blog_jwt="),
-  );
+  // Only the author of this article may edit or delete it.
+  const canManage = !!session?.user && !!blog && session.user.id === blog.authorId;
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDelete = async () => {
@@ -28,13 +28,7 @@ export default function BlogDetail({ params }: { params: Promise<{ id: string }>
 
     setIsDeleting(true);
     try {
-      const token = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("blog_jwt="))
-        ?.split("=")[1];
-      if (!token) throw new Error("Not authenticated");
-
-      await removeBlog({ token, blogId });
+      await removeBlog({ blogId });
       router.push("/insights");
     } catch (err: unknown) {
       alert(err instanceof Error ? err.message : "Failed to delete blog");
@@ -77,7 +71,7 @@ export default function BlogDetail({ params }: { params: Promise<{ id: string }>
               &larr; All insights
             </Link>
             <div className={styles.actionButtons}>
-              {isLoggedIn && (
+              {canManage && (
                 <>
                   <Link href={`/dashboard?edit=${blog._id}`} className={styles.editButton}>
                     Edit

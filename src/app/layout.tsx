@@ -22,16 +22,18 @@ export const metadata: Metadata = {
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { ConvexClientProvider } from "./ConvexClientProvider";
+import { getToken } from "@/lib/auth-server";
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const token = await getToken();
   return (
     <html lang="en" className={`${inter.variable}`}>
       <body>
-        <ConvexClientProvider>
+        <ConvexClientProvider initialToken={token}>
           <Header />
           <main>{children}</main>
           <Footer />

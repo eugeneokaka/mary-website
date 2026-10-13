@@ -1,28 +1,26 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useQuery } from 'convex/react';
+import { api } from '../../convex/_generated/api';
+import { authClient } from '@/lib/auth-client';
 import styles from './Header.module.css';
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const pathname = usePathname();
+  // Only show the dashboard links once an authorised user is signed in.
+  const viewer = useQuery(api.auth.viewer);
+  const isLoggedIn = !!viewer?.authorized;
   const router = useRouter();
-  useEffect(() => {
-    // Check for the auth cookie. It re-runs whenever the route changes (e.g. after login)
-    const hasToken = document.cookie.includes("blog_jwt=");
-    setIsLoggedIn(hasToken);
-  }, [pathname]);
 
   const toggleMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  const handleLogout = () => {
-    document.cookie = "blog_jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    setIsLoggedIn(false);
+  const handleLogout = async () => {
+    await authClient.signOut();
     setIsMobileMenuOpen(false);
     router.push('/');
   };

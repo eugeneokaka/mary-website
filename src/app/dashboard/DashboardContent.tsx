@@ -10,16 +10,6 @@ import Link from "next/link";
 import RichEditor from "@/components/RichEditor";
 import styles from "./Dashboard.module.css";
 
-function readToken(): string | null {
-  if (typeof document === "undefined") return null;
-  return (
-    document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("blog_jwt="))
-      ?.split("=")[1] ?? null
-  );
-}
-
 export default function DashboardContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -32,7 +22,6 @@ export default function DashboardContent() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const [token] = useState(() => readToken());
   const [loadedEditId, setLoadedEditId] = useState<string | null>(null);
 
   const convex = useConvex();
@@ -40,10 +29,13 @@ export default function DashboardContent() {
   const editBlog = useMutation(api.blogs.edit);
   const generateUploadUrl = useMutation(api.blogs.generateUploadUrl);
 
+  // Who is signed in and whether they may manage content (server-verified).
+  const viewer = useQuery(api.auth.viewer);
+
   // Authenticated list: only the current author's blogs, verified server-side.
   const allBlogs = useQuery(
     api.blogs.listMine,
-    token ? { token } : "skip",
+    viewer?.authorized ? {} : "skip",
   ) as
     | {
         _id: Id<"blogs">;
@@ -66,16 +58,17 @@ export default function DashboardContent() {
     | undefined
     | null;
 
-  // Redirect unauthenticated visitors to login.
+  // Redirect unauthenticated visitors to login, and unauthorised users home.
   useEffect(() => {
-    if (!token) {
+    if (viewer === null) {
       router.push("/login");
+    } else if (viewer && !viewer.authorized) {
+      router.push("/");
     }
-  }, [token, router]);
+  }, [viewer, router]);
 
   // Populate the form when the edit target changes / data arrives,
-  // and reset it when leaving edit mode. This is the React-recommended
-  // "adjust state during render" pattern (no setState-in-effect).
+  // and reset it when leaving edit mode.
   if (editingId && editingBlog && editingId !== loadedEditId) {
     setLoadedEditId(editingId);
     setTitle(editingBlog.title);
@@ -104,8 +97,7 @@ export default function DashboardContent() {
   // Upload an image inserted inside the rich editor. Returns a public URL that
   // the editor embeds directly into the document.
   const handleEditorImageUpload = async (file: File): Promise<string> => {
-    if (!token) throw new Error("You must be logged in to upload images");
-    const postUrl = await generateUploadUrl({ token });
+    const postUrl = await generateUploadUrl();
     const res = await fetch(postUrl, {
       method: "POST",
       headers: { "Content-Type": file.type },
@@ -127,15 +119,13 @@ export default function DashboardContent() {
     setError("");
 
     try {
-      if (!token) throw new Error("You must be logged in to publish a blog");
-
       if (!content) throw new Error("Please add some content to your article");
       const contentJson = JSON.stringify(content);
 
       let imageId: Id<"_storage"> | undefined = undefined;
 
       if (image) {
-        const postUrl = await generateUploadUrl({ token });
+        const postUrl = await generateUploadUrl();
         const uploadResult = await fetch(postUrl, {
           method: "POST",
           headers: { "Content-Type": image.type },
@@ -147,10 +137,10 @@ export default function DashboardContent() {
       }
 
       if (editingId) {
-        await editBlog({ token, blogId: editingId, title, content: contentJson, imageId });
+        await editBlog({ blogId: editingId, title, content: contentJson, imageId });
         setMessage("Article updated successfully!");
       } else {
-        await createBlog({ token, title, content: contentJson, imageId });
+        await createBlog({ title, content: contentJson, imageId });
         setMessage("Article published! It is now live on the Insights page.");
         setTitle("");
         setContent(null);
@@ -172,7 +162,7 @@ export default function DashboardContent() {
     return [...allBlogs].sort((a, b) => b.createdAt - a.createdAt);
   }, [allBlogs]);
 
-  if (!token) {
+  if (viewer === undefined || viewer === null || !viewer.authorized) {
     return <div className={styles.dashboardContainer} />;
   }
 

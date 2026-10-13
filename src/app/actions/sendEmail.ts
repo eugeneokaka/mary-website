@@ -29,7 +29,7 @@ export async function sendEmail(formData: FormData) {
     console.log(data)
 
     return { success: true };
-  } catch (error: any) {
-    return { error: error.message || 'Failed to send email' };
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : 'Failed to send email' };
   }
 }

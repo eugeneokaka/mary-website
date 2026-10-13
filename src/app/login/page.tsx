@@ -1,119 +1,190 @@
 "use client";
 
 import React, { useState } from "react";
-import { useMutation } from "convex/react";
-import { api } from "../../../convex/_generated/api";
+import { authClient } from "@/lib/auth-client";
 import styles from "./Login.module.css";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 
 export default function LoginPage() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [otp, setOtp] = useState("");
+  const [step, setStep] = useState<"email" | "otp">("email");
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
+  const [notice, setNotice] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const login = useMutation(api.auth.login);
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const sendCode = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    setSuccess(false);
+    setNotice("");
     setIsLoading(true);
 
     try {
-      if (!username || !password) {
-        throw new Error("Please enter both username and password");
+      if (!email) {
+        throw new Error("Please enter your email address");
       }
 
-      const result = await login({ username, password });
-      
-      if (result.success) {
-        setSuccess(true);
-        // Save the JWT token in a cookie so it can be automatically sent and validated 
-        // across requests, including Next.js server components and middleware.
-        document.cookie = `blog_jwt=${result.token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
-        
-        setTimeout(() => {
-          router.push("/"); // Redirect to home (or later a dashboard)
-        }, 1500);
+      const { error: sendError } = await authClient.emailOtp.sendVerificationOtp({
+        email,
+        type: "sign-in",
+      });
+
+      if (sendError) {
+        if (sendError.status === 403) {
+          // Not an authorised email — send them home quietly.
+          router.push("/");
+          return;
+        }
+        setError(sendError.message || "Could not send the code. Please try again.");
+        return;
       }
-    } catch (err: any) {
-      setError(err.message || "An error occurred during login");
+
+      setStep("otp");
+      setOtp("");
+      setNotice(`We sent a 6-digit code to ${email}. It expires in 5 minutes.`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const verifyCode = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setIsLoading(true);
+
+    try {
+      if (!otp) {
+        throw new Error("Please enter the code we emailed you");
+      }
+
+      const { error: verifyError } = await authClient.signIn.emailOtp({
+        email,
+        otp,
+      });
+
+      if (verifyError) {
+        if (verifyError.status === 403) {
+          router.push("/");
+          return;
+        }
+        setError(verifyError.message || "That code is invalid or has expired");
+        return;
+      }
+
+      router.push("/dashboard");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogle = async () => {
+    setError("");
+    await authClient.signIn.social({
+      provider: "google",
+      callbackURL: "/dashboard",
+      errorCallbackURL: "/",
+    });
   };
 
   return (
     <div className={styles.loginContainer}>
       <div className={styles.loginCard}>
         <h1 className={styles.title}>Welcome Back</h1>
-        <p className={styles.subtitle}>Log in to manage your blogs</p>
+        <p className={styles.subtitle}>Sign in to manage your blogs</p>
 
-        <form onSubmit={handleSubmit}>
-          <div className={styles.formGroup}>
-            <label className={styles.label} htmlFor="username">
-              Username
-            </label>
-            <input
-              id="username"
-              type="text"
-              className={styles.input}
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Enter your username"
-              disabled={isLoading || success}
-            />
-          </div>
-
-          <div className={styles.formGroup}>
-            <label className={styles.label} htmlFor="password">
-              Password
-            </label>
-            <div className={styles.passwordInputWrapper}>
+        {step === "email" ? (
+          <form onSubmit={sendCode}>
+            <div className={styles.formGroup}>
+              <label className={styles.label} htmlFor="email">
+                Email
+              </label>
               <input
-                id="password"
-                type={showPassword ? "text" : "password"}
+                id="email"
+                type="email"
                 className={styles.input}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
-                disabled={isLoading || success}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                disabled={isLoading}
               />
+            </div>
+
+            {error && <div className={styles.errorMsg}>{error}</div>}
+
+            <button type="submit" className={styles.submitButton} disabled={isLoading}>
+              {isLoading ? "Sending code..." : "Email me a code"}
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={verifyCode}>
+            {notice && <div className={styles.successMsg}>{notice}</div>}
+
+            <div className={styles.formGroup}>
+              <label className={styles.label} htmlFor="otp">
+                Verification code
+              </label>
+              <input
+                id="otp"
+                type="text"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                className={styles.input}
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                placeholder="6-digit code"
+                disabled={isLoading}
+              />
+            </div>
+
+            {error && <div className={styles.errorMsg}>{error}</div>}
+
+            <button type="submit" className={styles.submitButton} disabled={isLoading}>
+              {isLoading ? "Verifying..." : "Sign in"}
+            </button>
+
+            <div className={styles.linkText}>
               <button
                 type="button"
-                className={styles.showPasswordButton}
-                onClick={() => setShowPassword(!showPassword)}
-                disabled={isLoading || success}
+                className={styles.link}
+                style={{ background: "none", border: "none", cursor: "pointer" }}
+                onClick={sendCode}
+                disabled={isLoading}
               >
-                {showPassword ? "Hide" : "Show"}
+                Resend code
+              </button>
+              {" · "}
+              <button
+                type="button"
+                className={styles.link}
+                style={{ background: "none", border: "none", cursor: "pointer" }}
+                onClick={() => {
+                  setStep("email");
+                  setOtp("");
+                  setError("");
+                  setNotice("");
+                }}
+                disabled={isLoading}
+              >
+                Change email
               </button>
             </div>
-          </div>
+          </form>
+        )}
 
-          {error && <div className={styles.errorMsg}>{error}</div>}
-          {success && (
-            <div className={styles.successMsg}>
-              Logged in successfully! Redirecting...
-            </div>
-          )}
-
-          <button
-            type="submit"
-            className={styles.submitButton}
-            disabled={isLoading || success}
-          >
-            {isLoading ? "Logging in..." : "Log In"}
-          </button>
-          
-          <div className={styles.linkText}>
-            Don&apos;t have an account? <Link href="/signup" className={styles.link}>Sign up</Link>
-          </div>
-        </form>
+        <button
+          type="button"
+          className={styles.submitButton}
+          style={{ marginTop: "1rem", background: "#fff", color: "#111", border: "1px solid #ddd" }}
+          onClick={handleGoogle}
+          disabled={isLoading}
+        >
+          Continue with Google
+        </button>
       </div>
     </div>
   );
