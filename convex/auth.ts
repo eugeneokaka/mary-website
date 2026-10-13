@@ -5,6 +5,16 @@ import bcrypt from "bcryptjs";
 import { SignJWT, jwtVerify } from "jose";
 import { Id } from "./_generated/dataModel";
 
+function getJwtSecret(): Uint8Array {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error(
+      "JWT_SECRET is not set. Configure it with `npx convex env set JWT_SECRET <value>`.",
+    );
+  }
+  return new TextEncoder().encode(secret);
+}
+
 export const signUp = mutation({
   args: {
     username: v.string(),
@@ -63,9 +73,7 @@ export const login = mutation({
     }
 
     // Create JWT token
-    const secretKey = new TextEncoder().encode(
-      process.env.JWT_SECRET || "my-super-secret-fallback-key-12345"
-    );
+    const secretKey = getJwtSecret();
     
     const token = await new SignJWT({ userId: user._id, username: user.username })
       .setProtectedHeader({ alg: "HS256" })
@@ -84,9 +92,7 @@ export const login = mutation({
 
 export async function verifyToken(token: string) {
   try {
-    const secretKey = new TextEncoder().encode(
-      process.env.JWT_SECRET || "my-super-secret-fallback-key-12345"
-    );
+    const secretKey = getJwtSecret();
     const { payload } = await jwtVerify(token, secretKey);
     return payload; // Contains userId and username
   } catch {
