@@ -86,6 +86,64 @@
   padding: 0 2px;
 }
 
+/* Downloadable file attachments */
+.viewer :global(.attachment-card) {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin: 1.5rem 0;
+  padding: 0.9rem 1.1rem;
+  border: 1px solid #e5e7eb;
+  border-left: 4px solid var(--color-accent);
+  border-radius: 12px;
+  background-color: var(--color-secondary);
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.viewer :global(.attachment-card:hover) {
+  background-color: var(--color-accent-light);
+  color: var(--color-primary);
+}
+
+.viewer :global(.attachment-badge) {
+  flex-shrink: 0;
+  padding: 0.35rem 0.5rem;
+  border-radius: 6px;
+  background-color: var(--color-primary);
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.viewer :global(.attachment-details) {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.viewer :global(.attachment-name) {
+  font-weight: 600;
+  font-size: 1rem;
+  word-break: break-word;
+}
+
+.viewer :global(.attachment-size) {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.viewer :global(.attachment-action) {
+  flex-shrink: 0;
+  color: var(--color-accent);
+  font-size: 0.85rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
 .fallback {
   white-space: pre-wrap;
   font-size: 1.15rem;

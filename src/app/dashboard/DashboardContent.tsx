@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery, useMutation, useConvex } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
@@ -8,6 +8,8 @@ import type { JSONContent } from "@tiptap/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import RichEditor from "@/components/RichEditor";
+import AnalyticsSection from "@/components/AnalyticsSection";
+import { buildDownloadHref } from "@/lib/analytics-client";
 import styles from "./Dashboard.module.css";
 
 export default function DashboardContent() {
@@ -32,18 +34,6 @@ export default function DashboardContent() {
   // Who is signed in and whether they may manage content (server-verified).
   const viewer = useQuery(api.auth.viewer);
 
-  // Authenticated list: only the current author's blogs, verified server-side.
-  const allBlogs = useQuery(
-    api.blogs.listMine,
-    viewer?.authorized ? {} : "skip",
-  ) as
-    | {
-        _id: Id<"blogs">;
-        title: string;
-        imageUrl: string | null;
-        createdAt: number;
-      }[]
-    | undefined;
   const editingBlog = useQuery(
     api.blogs.getById,
     editingId ? { blogId: editingId } : "skip",
@@ -112,6 +102,29 @@ export default function DashboardContent() {
     return url;
   };
 
+  // Upload a document and return a public download link that forces the
+  // browser to save the file (served by the Convex HTTP `/download` route).
+  const handleEditorFileUpload = async (file: File) => {
+    const postUrl = await generateUploadUrl();
+    const res = await fetch(postUrl, {
+      method: "POST",
+      headers: { "Content-Type": file.type || "application/octet-stream" },
+      body: file,
+    });
+    if (!res.ok) throw new Error("Failed to upload file");
+    const { storageId } = await res.json();
+
+    if (!process.env.NEXT_PUBLIC_CONVEX_SITE_URL) {
+      throw new Error("Missing NEXT_PUBLIC_CONVEX_SITE_URL");
+    }
+
+    return {
+      href: buildDownloadHref(storageId, file.name),
+      name: file.name,
+      size: file.size,
+    };
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -156,11 +169,6 @@ export default function DashboardContent() {
   const handleCancelEdit = () => {
     router.push("/dashboard");
   };
-
-  const sortedBlogs = useMemo(() => {
-    if (!allBlogs) return [];
-    return [...allBlogs].sort((a, b) => b.createdAt - a.createdAt);
-  }, [allBlogs]);
 
   if (viewer === undefined || viewer === null || !viewer.authorized) {
     return <div className={styles.dashboardContainer} />;
@@ -224,7 +232,8 @@ export default function DashboardContent() {
               value={content}
               onChange={(json) => setContent(json)}
               onImageUpload={handleEditorImageUpload}
-              placeholder="Start writing your article. use the toolbar to format text, add headings, lists, links, and images."
+              onFileUpload={handleEditorFileUpload}
+              placeholder="Start writing your article. use the toolbar to format text, add headings, lists, links, images, and downloadable files."
             />
           </div>
 
@@ -264,52 +273,8 @@ export default function DashboardContent() {
         </form>
       </div>
 
-      {/* Existing posts management */}
-      {!editingId && (
-        <section className={styles.postsSection}>
-          <h2 className={styles.postsHeading}>Your Published Articles</h2>
-          {sortedBlogs.length === 0 ? (
-            <p className={styles.postsEmpty}>
-              You haven&apos;t published any articles yet. Use the form above to write your first one.
-            </p>
-          ) : (
-            <ul className={styles.postsList}>
-              {sortedBlogs.map((post) => (
-                <li key={post._id} className={styles.postRow}>
-                  <Link href={`/insights/${post._id}`} className={styles.postRowThumb}>
-                    {post.imageUrl ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={post.imageUrl} alt={post.title} />
-                    ) : (
-                      <div className={styles.postRowPlaceholder} />
-                    )}
-                  </Link>
-                  <div className={styles.postRowInfo}>
-                    <Link href={`/insights/${post._id}`} className={styles.postRowTitle}>
-                      {post.title}
-                    </Link>
-                    <span className={styles.postRowDate}>
-                      {new Date(post.createdAt).toLocaleDateString(undefined, {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })}
-                    </span>
-                  </div>
-                  <div className={styles.postRowActions}>
-                    <Link href={`/dashboard?edit=${post._id}`} className={styles.postRowEdit}>
-                      Edit
-                    </Link>
-                    <Link href={`/insights/${post._id}`} className={styles.postRowView}>
-                      View
-                    </Link>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-      )}
+      {/* Analytics: all published articles with date filtering and per-article drill-down */}
+      {!editingId && <AnalyticsSection />}
     </div>
   );
 }

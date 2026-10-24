@@ -11,10 +11,14 @@ import { TextStyle } from '@tiptap/extension-text-style';
 import { Color } from '@tiptap/extension-color';
 import Highlight from '@tiptap/extension-highlight';
 import type { JSONContent } from '@tiptap/react';
+import { Attachment } from './AttachmentNode';
+import { withPostId } from '@/lib/analytics-client';
 import styles from './RichContentViewer.module.css';
 
 interface RichContentViewerProps {
   content: string | JSONContent;
+  /** When provided, attachment links are tagged so downloads can be counted. */
+  postId?: string;
 }
 
 function parseContent(content: string | JSONContent): JSONContent | null {
@@ -30,16 +34,18 @@ function parseContent(content: string | JSONContent): JSONContent | null {
   return content;
 }
 
-export default function RichContentViewer({ content }: RichContentViewerProps) {
-  const json = parseContent(content);
+export default function RichContentViewer({ content, postId }: RichContentViewerProps) {
+  const parsed = parseContent(content);
 
-  if (!json) {
+  if (!parsed) {
     // Fallback for legacy plain-text posts: render the string as preformatted text
     if (typeof content === 'string') {
       return <div className={styles.fallback}>{content}</div>;
     }
     return null;
   }
+
+  const json = postId ? tagAttachments(parsed, postId) : parsed;
 
   const html = generateHTML(json, [
     StarterKit.configure({ heading: { levels: [1, 2, 3] } }),
@@ -50,7 +56,26 @@ export default function RichContentViewer({ content }: RichContentViewerProps) {
     TextAlign.configure({ types: ['heading', 'paragraph'] }),
     Link.configure({ openOnClick: true, HTMLAttributes: { rel: 'noopener noreferrer', target: '_blank' } }),
     Image.configure({ inline: false, allowBase64: true }),
+    Attachment,
   ]);
 
   return <div className={styles.viewer} dangerouslySetInnerHTML={{ __html: html }} />;
+}
+
+function tagAttachments(node: JSONContent, postId: string): JSONContent {
+  if (node.type === 'attachment') {
+    return {
+      ...node,
+      attrs: {
+        ...node.attrs,
+        href: withPostId(node.attrs?.href as string | undefined, postId),
+      },
+    };
+  }
+
+  if (Array.isArray(node.content)) {
+    return { ...node, content: node.content.map((child) => tagAttachments(child, postId)) };
+  }
+
+  return node;
 }

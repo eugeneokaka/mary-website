@@ -12,6 +12,7 @@ import { TextStyle } from '@tiptap/extension-text-style';
 import { Color } from '@tiptap/extension-color';
 import Highlight from '@tiptap/extension-highlight';
 import type { JSONContent } from '@tiptap/react';
+import { Attachment } from './AttachmentNode';
 import styles from './RichEditor.module.css';
 
 const TEXT_COLORS = [
@@ -39,12 +40,21 @@ const HIGHLIGHT_COLORS = [
   '#e7e5e4',
 ];
 
+interface UploadedFile {
+  href: string;
+  name: string;
+  size: number;
+}
+
 interface RichEditorProps {
   value?: JSONContent | null;
   onChange: (json: JSONContent) => void;
   /** When provided, the Image button uploads a file through this handler and
    *  inserts the returned URL. When omitted, falls back to a URL prompt. */
   onImageUpload?: (file: File) => Promise<string>;
+  /** When provided, the File button uploads a document and inserts a
+   *  downloadable attachment block. */
+  onFileUpload?: (file: File) => Promise<UploadedFile>;
   placeholder?: string;
   editable?: boolean;
 }
@@ -53,11 +63,14 @@ export default function RichEditor({
   value,
   onChange,
   onImageUpload,
+  onFileUpload,
   placeholder = 'Start writing your article…',
   editable = true,
 }: RichEditorProps) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const docInputRef = useRef<HTMLInputElement | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [uploadingFile, setUploadingFile] = useState(false);
   const [openColor, setOpenColor] = useState<'text' | 'highlight' | null>(null);
 
   const editor = useEditor({
@@ -75,6 +88,7 @@ export default function RichEditor({
         HTMLAttributes: { rel: 'noopener noreferrer', target: '_blank' },
       }),
       Image.configure({ inline: false, allowBase64: true }),
+      Attachment,
       Placeholder.configure({ placeholder }),
     ],
     content: value ?? undefined,
@@ -138,6 +152,30 @@ export default function RichEditor({
       window.alert(msg);
     } finally {
       setUploading(false);
+    }
+  };
+
+  const handleDocumentChosen = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file || !onFileUpload) return;
+
+    setUploadingFile(true);
+    try {
+      const uploaded = await onFileUpload(file);
+      editor
+        .chain()
+        .focus()
+        .insertContent({
+          type: 'attachment',
+          attrs: { href: uploaded.href, name: uploaded.name, size: uploaded.size },
+        })
+        .run();
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Failed to upload file';
+      window.alert(msg);
+    } finally {
+      setUploadingFile(false);
     }
   };
 
@@ -351,6 +389,17 @@ export default function RichEditor({
           >
             {uploading ? 'Uploading…' : 'Image'}
           </button>
+          {onFileUpload && (
+            <button
+              type="button"
+              className={btn(false)}
+              onClick={() => docInputRef.current?.click()}
+              disabled={uploadingFile}
+              title="Upload a downloadable file (PDF, Word, Excel, PowerPoint…)"
+            >
+              {uploadingFile ? 'Uploading…' : 'File'}
+            </button>
+          )}
         </div>
       )}
       <input
@@ -359,6 +408,13 @@ export default function RichEditor({
         accept="image/*"
         className={styles.hiddenFileInput}
         onChange={handleFileChosen}
+      />
+      <input
+        ref={docInputRef}
+        type="file"
+        accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.rtf,.zip"
+        className={styles.hiddenFileInput}
+        onChange={handleDocumentChosen}
       />
       <EditorContent editor={editor} className={styles.contentArea} />
     </div>
