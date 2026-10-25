@@ -36,6 +36,10 @@ export default function Contact() {
                 <p>+254 721 427 803</p>
               </div>
               <div className={styles.detailItem}>
+                <h3>Location</h3>
+                <p>Nairobi, Kenya</p>
+              </div>
+              <div className={styles.detailItem}>
                 <h3>Connect</h3>
                 <div className={styles.socialLinks}>
                   <a href="https://www.linkedin.com/in/mary-adhiambo/" aria-label="LinkedIn">

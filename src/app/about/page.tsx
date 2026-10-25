@@ -43,7 +43,7 @@ export default function About() {
           <div className={styles.textCol}>
             <h2>Separating Nutrition Facts from Fiction</h2>
             <p>
-              I&apos;m Mary, a Nutritionist and Wellness Consultant with over 10 years of experience helping people separate nutrition facts from nutrition fiction.
+              I&apos;m Mary, a Nairobi based Nutritionist and Wellness Consultant with over 10 years of experience helping people separate nutrition facts from nutrition fiction.
             </p>
             <p>
               After graduating top of my class with a Bachelor&apos;s Degree in Nutrition from Kenyatta University and becoming licensed by the Kenya Nutritionists and Dieticians Institute (KNDI), I spent years working with clients and patients. One thing became clear: people are surrounded by health advice, but not all of it is good advice. Between social media gurus, miracle cures, and the latest life changing diet trends, it&apos;s easy to see why so many people are confused.

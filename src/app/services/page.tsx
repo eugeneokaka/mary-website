@@ -220,7 +220,7 @@ export default function Services() {
             <span className={styles.eyebrow}>School Nutrition &amp; Wellness</span>
             <h2>Creating Healthier Learning Environments</h2>
             <p className={styles.lead}>
-              At Oasis Wellness Consultancy, we partner with schools to create healthier
+              At Oasis Wellness Consultancy, we partner with schools in Nairobi to create healthier
               learning environments through expert, evidence-based nutrition solutions.
             </p>
             <p>
